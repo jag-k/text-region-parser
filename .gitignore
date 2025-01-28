@@ -145,6 +145,7 @@ pyrightconig.json
 .python_version
 .benchmarks
 junit
+junit.xml
 
 # Hatch version control from https://github.com/ofek/hatch-vcs
 region_parser/version.py
