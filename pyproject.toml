@@ -1,11 +1,32 @@
 [project]
 name = "text-region-parser"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.1.1"
+description = "Parse regions in your Markdown/text files!"
 readme = "README.md"
 authors = [
     { name = "Jag_k", email = "30597878+jag-k@users.noreply.github.com" }
 ]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Documentation",
+    "Topic :: Utilities",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+license = { file = "LICENCE" }
+repository = "https://github.com/jag-k/text-region-parser"
+homepage = "https://github.com/jag-k/text-region-parser#readme"
+packages = [
+    { include = "text_region_parser", from = "src" },
+]
+keywords = ["text", "markdown", "txt", "files", "parser", "parsing", "tools", "generation", "utils"]
 requires-python = ">=3.9"
 dependencies = [
     "typing-extensions; python_version < '3.10'"
