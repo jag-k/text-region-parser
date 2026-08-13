@@ -3,12 +3,11 @@
 This module provides a class for creating region parsers.
 """
 
-import functools
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from os import PathLike
 from pathlib import Path
-from typing import Optional, TypeVar
+from typing import Any, Optional, TypeVar
 
 from text_region_parser._utils import _validate_options_type, _validate_region_name
 from text_region_parser.region_parser import get_region
@@ -19,8 +18,9 @@ __all__ = (
 )
 
 
-OptionType = TypeVar("OptionType", bound=type[dict])
+OptionType = TypeVar("OptionType", bound=Mapping[str, object])
 ParserType = Callable[[OptionType], str]
+StoredParserType = Callable[[Any], str]
 
 logger = logging.getLogger(__name__)
 
@@ -70,13 +70,13 @@ class RegionConstructor:
 
         Add a `_parser` container
         """
-        self._parsers: dict[str, ParserType] = {}
+        self._parsers: dict[str, StoredParserType] = {}
 
     def add_parser(
         self,
         region_name: str,
-        options_type: Optional[OptionType] = None,
-    ) -> Callable[[ParserType], ParserType]:
+        options_type: Optional[type[OptionType]] = None,
+    ) -> Callable[[ParserType[OptionType]], ParserType[OptionType]]:
         """Register a parser.
 
         :param region_name: The name of the region, which will be parsed.
@@ -91,16 +91,9 @@ class RegionConstructor:
         if options_type:
             _validate_options_type(options_type)
 
-        def decorator(parser: ParserType) -> ParserType:
+        def decorator(parser: ParserType[OptionType]) -> ParserType[OptionType]:
             self._parsers[region_name] = parser
-
-            @functools.wraps(parser)
-            def wrapper(options: OptionType) -> str:
-                if options_type and not isinstance(options, options_type):
-                    raise ValueError(f"The options must be an instance of {options_type}")
-                return parser(options)
-
-            return wrapper
+            return parser
 
         return decorator
 
@@ -132,7 +125,7 @@ class RegionConstructor:
                     logger.error(f"Invalid options for region {region_name}: {e}")
                     continue
 
-            content = "\n".join(str(region) for region in regions)
+            content = "".join(str(region) for region in regions)
 
         return content
 

@@ -1,6 +1,12 @@
 import functools
 import re
+import sys
 from typing import get_type_hints
+
+if sys.version_info < (3, 10):
+    from typing_extensions import is_typeddict
+else:
+    from typing import is_typeddict
 
 
 @functools.cache
@@ -57,13 +63,13 @@ def _get_region_validate_inputs(file_content: str, region_name: str) -> None:
     _validate_region_name(region_name)
 
 
-def _validate_options_type(options_type: type[dict]) -> None:
+def _validate_options_type(options_type: type[object]) -> None:
     """Validate that all TypedDict values are strings.
 
     :param options_type: TypedDict type to validate, not an instance or simple dict.
     :raises TypeError: If options_type is invalid.
     """
-    if not (isinstance(options_type, type) and hasattr(options_type, "__annotations__")):
+    if not is_typeddict(options_type):
         raise TypeError("options_type must be a TypedDict subclass")
 
     hints = get_type_hints(options_type)

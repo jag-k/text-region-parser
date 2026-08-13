@@ -203,6 +203,27 @@ def test_multiple_regions() -> None:
 
     assert "key=test1, value=value1" in result
     assert "key=test2, value=value2" in result
+    assert constructor.parse_content(result) == result
+
+
+@pytest.mark.formatting
+def test_multiple_regions_do_not_add_newlines() -> None:
+    """Do not insert separators between reconstructed regions."""
+    constructor = RegionConstructor()
+
+    @constructor.add_parser("test", options_type=OptionsForTest)
+    def test_parser(options: OptionsForTest) -> str:
+        return create_test_parser(options)
+
+    content = (
+        create_region_content("test", CONTENT, 'key="test1" value="value1"')
+        + "middle"
+        + create_region_content("test", CONTENT, 'key="test2" value="value2"')
+    )
+
+    result = constructor.parse_content(content)
+
+    assert "<!-- endregion:test -->middle<!-- region:test" in result
 
 
 @pytest.mark.formatting
